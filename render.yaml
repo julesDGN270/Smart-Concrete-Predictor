@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: smart-concrete-predictor
+    runtime: python
+    plan: free
+    buildCommand: pip install -r webapp/requirements.txt
+    startCommand: gunicorn --chdir . webapp.app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9

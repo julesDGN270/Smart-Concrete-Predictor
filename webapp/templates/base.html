@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Smart Concrete Predictor{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="titleblock">
+  <h1>Smart Concrete Predictor</h1>
+  <div class="ref">
+    FICHE N&deg; SCP-{{ '%03d'|format(range(1,999)|random) }}<br>
+    Materiaux &amp; formulation &mdash; v2.0 web
+  </div>
+</div>
+
+<nav class="tabs">
+  <a href="{{ url_for('predict_page') }}" class="{{ 'active' if active=='predict' else '' }}">Prediction</a>
+  <a href="{{ url_for('formulation_page') }}" class="{{ 'active' if active=='formulation' else '' }}">Formulation IA</a>
+</nav>
+
+<main>
+  {% block content %}{% endblock %}
+</main>
+
+<footer>Modele CatBoost charge cote serveur &mdash; methode de formulation Dreux-Gorisse.</footer>
+
+</body>
+</html>

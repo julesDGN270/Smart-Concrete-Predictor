@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Formulation IA - Smart Concrete Predictor{% endblock %}
+{% block content %}
+<h2>Assistant de formulation (Dreux-Gorisse + verification IA)</h2>
+
+{% if error %}
+<div class="error-box">{{ error }}</div>
+{% endif %}
+
+<form method="post">
+  <div class="grid-form">
+    <div>
+      <label>Resistance cible (MPa)</label>
+      <input type="number" step="any" name="target_strength" value="{{ form_values.target_strength if form_values else '30' }}" required>
+    </div>
+    <div>
+      <label>Dmax (mm)</label>
+      <input type="number" step="any" name="dmax" value="{{ form_values.dmax if form_values else '20' }}" required>
+    </div>
+    <div>
+      <label>Affaissement (cm)</label>
+      <input type="number" step="any" name="affaissement_cm" value="{{ form_values.affaissement_cm if form_values else '7' }}">
+    </div>
+    <div>
+      <label>Classe d'exposition (optionnel)</label>
+      <input type="text" name="exposure_class" value="{{ form_values.exposure_class if form_values else '' }}" placeholder="ex: XC3">
+    </div>
+    <div>
+      <label>Classe vraie ciment MPa (optionnel)</label>
+      <input type="number" step="any" name="cement_true_class" value="{{ form_values.cement_true_class if form_values else '' }}">
+    </div>
+    <div>
+      <label>Module de finesse sable</label>
+      <input type="number" step="any" name="sand_fineness_modulus" value="{{ form_values.sand_fineness_modulus if form_values else '2.5' }}">
+    </div>
+    <div>
+      <label>Qualite des granulats</label>
+      <select name="granulat_quality">
+        <option value="bonne" {{ 'selected' if form_values and form_values.granulat_quality=='bonne' else '' }}>Bonne</option>
+        <option value="excellente" {{ 'selected' if form_values and form_values.granulat_quality=='excellente' else '' }}>Excellente</option>
+        <option value="passable" {{ 'selected' if form_values and form_values.granulat_quality=='passable' else '' }}>Passable</option>
+      </select>
+    </div>
+  </div>
+  <button type="submit">Generer la formulation</button>
+</form>
+
+{% if result %}
+<div class="dataplate">
+  <div class="headline">{{ '%.1f'|format(result.predicted_strength) }} MPa
+    <span>predits (cible {{ '%.1f'|format(result.target_strength) }} MPa, ecart {{ '%+.1f'|format(result.error) }})</span>
+  </div>
+  <table>
+    <tr><td class="label">Ciment</td><td>{{ '%.0f'|format(result.mix.cement) }} kg/m3</td></tr>
+    <tr><td class="label">Eau</td><td>{{ '%.0f'|format(result.mix.water) }} L/m3</td></tr>
+    <tr><td class="label">Sable</td><td>{{ '%.0f'|format(result.mix.sand) }} kg/m3</td></tr>
+    <tr><td class="label">Gravier</td><td>{{ '%.0f'|format(result.mix.gravel) }} kg/m3</td></tr>
+    <tr><td class="label">Rapport E/C</td><td>{{ '%.3f'|format(result.mix.ec_ratio) }}</td></tr>
+  </table>
+  {% if result.mix.warnings %}
+  <ul class="warnings">
+    {% for w in result.mix.warnings %}
+    <li>&#9888; {{ w }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+</div>
+{% endif %}
+
+{% endblock %}

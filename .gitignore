@@ -1,0 +1,22 @@
+# Environnements / cache Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Donnees locales generees (a ne pas partager/versionner)
+history/*.db
+history/*.xlsx
+history/*.pdf
+
+# Artefacts de build (regeneres localement, inutiles sur GitHub)
+build/
+dist/
+installer_output/
+*.spec
+catboost_info/
+
+# Divers
+.DS_Store
+Thumbs.db
