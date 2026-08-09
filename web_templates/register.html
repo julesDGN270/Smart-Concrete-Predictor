@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Creer un compte{% endblock %}
+{% block content %}
+<div class="card">
+    <h1>Creer un compte</h1>
+    <p class="muted">Plan Pro offert pendant la periode de lancement.</p>
+
+    <div class="tabs">
+        <a href="{{ url_for('login') }}">Connexion</a>
+        <a href="{{ url_for('register') }}" class="active">Creer un compte</a>
+    </div>
+
+    <form method="post" id="register-form">
+        <label>Type de compte</label>
+        <select name="account_type" id="account_type" onchange="toggleCompany()">
+            <option value="particulier">Particulier</option>
+            <option value="entreprise">Entreprise</option>
+        </select>
+
+        <div id="company-block" style="display:none;">
+            <label>Entreprise</label>
+            <select name="company_mode" id="company_mode" onchange="toggleCompanyMode()">
+                <option value="creer">Creer une nouvelle entreprise</option>
+                <option value="rejoindre">Rejoindre une entreprise existante</option>
+            </select>
+
+            <div id="company-name-block">
+                <label>Nom de l'entreprise</label>
+                <input type="text" name="company_name" placeholder="Nom de l'entreprise">
+            </div>
+            <div id="invite-code-block" style="display:none;">
+                <label>Code d'invitation recu</label>
+                <input type="text" name="invite_code" placeholder="Code a 7 caracteres">
+            </div>
+        </div>
+
+        <label>Email ou numero de telephone</label>
+        <input type="text" name="contact" placeholder="ex: jules@mail.com ou +22990000000" required>
+
+        <label>Mot de passe</label>
+        <input type="password" name="password" required>
+
+        <button type="submit">Creer le compte</button>
+    </form>
+</div>
+
+<script>
+function toggleCompany() {
+    const isEntreprise = document.getElementById('account_type').value === 'entreprise';
+    document.getElementById('company-block').style.display = isEntreprise ? 'block' : 'none';
+}
+function toggleCompanyMode() {
+    const creating = document.getElementById('company_mode').value === 'creer';
+    document.getElementById('company-name-block').style.display = creating ? 'block' : 'none';
+    document.getElementById('invite-code-block').style.display = creating ? 'none' : 'block';
+}
+</script>
+{% endblock %}

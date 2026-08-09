@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Verification du compte{% endblock %}
+{% block content %}
+<div class="card">
+    <h1>Verification du compte</h1>
+    <p class="muted">Code envoye a : <strong>{{ contact }}</strong><br>Valable 10 minutes.</p>
+
+    <form method="post">
+        <label>Code a 6 chiffres</label>
+        <input type="text" name="code" maxlength="6" required autofocus>
+        <button type="submit">Valider</button>
+    </form>
+
+    <form method="post" action="{{ url_for('resend_code') }}">
+        <button type="submit" class="btn-outline">Renvoyer le code</button>
+    </form>
+</div>
+{% endblock %}

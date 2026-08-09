@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Analyse{% endblock %}
+{% block content %}
+<div class="card">
+    <h1>Analyse des predictions</h1>
+
+    {% if not stats %}
+    <p class="muted">Pas encore assez de donnees pour une analyse.</p>
+    {% else %}
+    <div class="stat-grid">
+        <div class="stat-box"><div class="value">{{ stats.count }}</div><div class="label">Predictions</div></div>
+        <div class="stat-box"><div class="value">{{ stats.avg }}</div><div class="label">Moyenne (MPa)</div></div>
+        <div class="stat-box"><div class="value">{{ stats.min }}</div><div class="label">Minimum (MPa)</div></div>
+        <div class="stat-box"><div class="value">{{ stats.max }}</div><div class="label">Maximum (MPa)</div></div>
+    </div>
+
+    <h2>Evolution (20 dernieres predictions)</h2>
+    <canvas id="chart" height="100"></canvas>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <script>
+        const ctx = document.getElementById('chart');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: {{ chart_labels | tojson }},
+                datasets: [{
+                    label: 'Resistance predite (MPa)',
+                    data: {{ chart_values | tojson }},
+                    borderColor: '#2FA84F',
+                    backgroundColor: 'rgba(47,168,79,.15)',
+                    tension: 0.3,
+                    fill: true,
+                }]
+            },
+            options: {
+                plugins: { legend: { labels: { color: '#e8e8e8' } } },
+                scales: {
+                    x: { ticks: { color: '#9aa0a6' } },
+                    y: { ticks: { color: '#9aa0a6' } }
+                }
+            }
+        });
+    </script>
+    {% endif %}
+</div>
+{% endblock %}

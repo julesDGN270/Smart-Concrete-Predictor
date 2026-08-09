@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Historique{% endblock %}
+{% block content %}
+<div class="card">
+    <h1>Historique des predictions</h1>
+
+    {% if not rows %}
+    <p class="muted">Aucune prediction pour le moment.</p>
+    {% else %}
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Ciment</th>
+                <th>Eau</th>
+                <th>Age</th>
+                <th>Prediction (MPa)</th>
+                <th>Source</th>
+                {% if can_delete %}<th></th>{% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in rows %}
+            <tr>
+                <td>{{ r[1] }}</td>
+                <td>{{ r[2] }}</td>
+                <td>{{ r[5] }}</td>
+                <td>{{ r[9] }}</td>
+                <td>{{ r[10] }}</td>
+                <td>{{ r[11] }}</td>
+                {% if can_delete %}
+                <td>
+                    <form method="post" action="{{ url_for('supprimer_prediction', pred_id=r[0]) }}"
+                          onsubmit="return confirm('Supprimer cette prediction ?');">
+                        <button type="submit" class="btn-danger" style="margin:0;padding:4px 10px;font-size:12px;">Suppr.</button>
+                    </form>
+                </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</div>
+{% endblock %}

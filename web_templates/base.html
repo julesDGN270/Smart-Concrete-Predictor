@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Smart Concrete Predictor{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="topbar">
+        <div class="brand">SMART CONCRETE PREDICTOR <span class="badge-pro">PRO</span></div>
+        {% if current_user %}
+        <nav>
+            <a href="{{ url_for('dashboard') }}">Prediction</a>
+            <a href="{{ url_for('historique') }}">Historique</a>
+            <a href="{{ url_for('analyse') }}">Analyse</a>
+            <a href="{{ url_for('compte') }}">Mon compte</a>
+            <a href="{{ url_for('logout') }}">Deconnexion</a>
+        </nav>
+        {% endif %}
+    </div>
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

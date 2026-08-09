@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Prediction{% endblock %}
+{% block content %}
+<div class="card">
+    <h1>Nouvelle prediction</h1>
+    <p class="muted">Renseignez la formulation du beton pour estimer sa resistance a la compression.</p>
+
+    <form method="post">
+        {% for key, label in fields %}
+        <label>{{ label }}</label>
+        <input type="number" step="any" name="{{ key }}" required>
+        {% endfor %}
+
+        <button type="submit">Predire</button>
+    </form>
+
+    {% if prediction is not none %}
+    <div class="result-box">
+        <div class="muted">Resistance a la compression estimee</div>
+        <div class="value">{{ prediction }} MPa</div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

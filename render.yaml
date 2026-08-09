@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: smart-concrete-predictor
+    env: python
+    plan: free
+    buildCommand: "pip install -r requirements-web.txt"
+    startCommand: "gunicorn app_web:app"
+    envVars:
+      - key: SCP_SECRET_KEY
+        generateValue: true
+      - key: SCP_SMTP_HOST
+        sync: false
+      - key: SCP_SMTP_PORT
+        value: "587"
+      - key: SCP_SMTP_USER
+        sync: false
+      - key: SCP_SMTP_PASSWORD
+        sync: false
+      - key: SCP_SMTP_FROM
+        sync: false

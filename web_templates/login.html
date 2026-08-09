@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Connexion{% endblock %}
+{% block content %}
+<div class="card">
+    <h1>Connexion</h1>
+    <p class="muted">Plan Pro offert pendant la periode de lancement.</p>
+
+    <div class="tabs">
+        <a href="{{ url_for('login') }}" class="active">Connexion</a>
+        <a href="{{ url_for('register') }}">Creer un compte</a>
+    </div>
+
+    <form method="post">
+        <label>Email ou numero de telephone</label>
+        <input type="text" name="contact" placeholder="ex: jules@mail.com ou +22990000000" required>
+
+        <label>Mot de passe</label>
+        <input type="password" name="password" required>
+
+        <button type="submit">Se connecter</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+name: Build Windows installer
+
+# Se declenche a chaque push sur main touchant l'app bureau, ou manuellement
+# depuis l'onglet Actions du depot GitHub ("Run workflow").
+on:
+  push:
+    branches: [main]
+    paths:
+      - "app_v2.py"
+      - "core/**"
+      - "ui/**"
+      - "build_windows.spec"
+      - "installer.iss"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Recuperer le code
+        uses: actions/checkout@v4
+
+      - name: Installer Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Installer les dependances
+        run: |
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Construire l'executable (PyInstaller)
+        run: pyinstaller build_windows.spec
+
+      - name: Installer Inno Setup
+        run: choco install innosetup -y
+
+      - name: Construire l'installeur (Inno Setup)
+        run: |
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer.iss
+
+      - name: Publier l'installeur genere
+        uses: actions/upload-artifact@v4
+        with:
+          name: SmartConcretePredictor_Setup
+          path: Output/SmartConcretePredictor_Setup.exe

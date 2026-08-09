@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Mon compte{% endblock %}
+{% block content %}
+<div class="card">
+    <h1>Mon compte</h1>
+
+    <p><strong>{{ user.contact }}</strong></p>
+    <p class="muted">
+        {% if user.account_type == 'entreprise' %}
+            Compte entreprise{% if user.organisation %} - {{ user.organisation }}{% endif %}
+            ({{ 'Admin' if user.role == 'admin' else 'Membre' }})
+        {% else %}
+            Compte particulier
+        {% endif %}
+    </p>
+    <p class="badge-pro">
+        {{ 'Plan Pro - offert pendant la periode de lancement' if user.plan_gratuit else 'Plan Pro' }}
+    </p>
+
+    {% if user.account_type == 'entreprise' and user.role == 'admin' and user.invite_code %}
+    <h2>Code d'invitation</h2>
+    <p class="muted">Partagez ce code avec votre equipe pour qu'elle rejoigne votre entreprise.</p>
+    <span class="invite-code">{{ user.invite_code }}</span>
+    {% endif %}
+
+    <div style="margin-top:30px;">
+        <a href="{{ url_for('logout') }}" class="btn btn-outline">Deconnexion</a>
+    </div>
+</div>
+{% endblock %}
