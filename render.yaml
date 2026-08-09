@@ -1,6 +1,7 @@
 services:
   - type: web
     name: smart-concrete-predictor
+<<<<<<< HEAD
     env: python
     plan: free
     buildCommand: "pip install -r requirements-web.txt"
@@ -18,3 +19,12 @@ services:
         sync: false
       - key: SCP_SMTP_FROM
         sync: false
+=======
+    runtime: python
+    plan: free
+    buildCommand: pip install -r webapp/requirements.txt
+    startCommand: gunicorn --chdir . webapp.app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+>>>>>>> 1280d27de547dbc305e9f55dee04900c72692f4d

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Prediction - Smart Concrete Predictor{% endblock %}
+{% block content %}
+<h2>Prediction de la resistance a 28 jours</h2>
+
+{% if error %}
+<div class="error-box">{{ error }}</div>
+{% endif %}
+
+<form method="post">
+  <div class="grid-form">
+    <div>
+      <label>Ciment (kg/m3)</label>
+      <input type="number" step="any" name="cement" value="{{ form_values.cement if form_values else '' }}" required>
+    </div>
+    <div>
+      <label>Laitier (kg/m3)</label>
+      <input type="number" step="any" name="slag" value="{{ form_values.slag if form_values else '0' }}">
+    </div>
+    <div>
+      <label>Cendres volantes (kg/m3)</label>
+      <input type="number" step="any" name="fly_ash" value="{{ form_values.fly_ash if form_values else '0' }}">
+    </div>
+    <div>
+      <label>Eau (kg/m3)</label>
+      <input type="number" step="any" name="water" value="{{ form_values.water if form_values else '' }}" required>
+    </div>
+    <div>
+      <label>Superplastifiant (kg/m3)</label>
+      <input type="number" step="any" name="superplasticizer" value="{{ form_values.superplasticizer if form_values else '0' }}">
+    </div>
+    <div>
+      <label>Granulats grossiers (kg/m3)</label>
+      <input type="number" step="any" name="coarse" value="{{ form_values.coarse if form_values else '' }}" required>
+    </div>
+    <div>
+      <label>Granulats fins (kg/m3)</label>
+      <input type="number" step="any" name="fine" value="{{ form_values.fine if form_values else '' }}" required>
+    </div>
+    <div>
+      <label>Age (jours)</label>
+      <input type="number" step="any" name="age" value="{{ form_values.age if form_values else '28' }}" required>
+    </div>
+  </div>
+  <button type="submit">Predire</button>
+</form>
+
+{% if prediction is not none %}
+<div class="dataplate">
+  <div class="headline">{{ '%.2f'|format(prediction) }} MPa <span>resistance predite</span></div>
+</div>
+{% endif %}
+
+{% endblock %}

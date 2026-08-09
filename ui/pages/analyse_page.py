@@ -32,10 +32,14 @@ class AnalysePage(ctk.CTkFrame):
         scroll = ctk.CTkScrollableFrame(self, fg_color="transparent")
         scroll.grid(row=0, column=0, sticky="nsew")
 
+<<<<<<< HEAD
         rows = self.db.get_all(
             user_id=self.app.current_user["id"],
             company_id=self.app.current_user.get("company_id"),
         )
+=======
+        rows = self.db.get_all()
+>>>>>>> 1280d27de547dbc305e9f55dee04900c72692f4d
         df = pd.DataFrame(rows, columns=COLUMNS)
 
         ctk.CTkLabel(scroll, text="Analyse des predictions", font=("Arial", 24, "bold")).pack(pady=15)

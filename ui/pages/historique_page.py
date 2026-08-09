@@ -34,6 +34,7 @@ class HistoriquePage(ctk.CTkFrame):
 
         ctk.CTkButton(top_frame, text="Rechercher", command=self.search).pack(side="left", padx=5)
         ctk.CTkButton(top_frame, text="Actualiser", command=self.load_data).pack(side="left", padx=5)
+<<<<<<< HEAD
 
         self.can_delete = self._user_can_delete()
         if self.can_delete:
@@ -42,6 +43,9 @@ class HistoriquePage(ctk.CTkFrame):
                 command=self.delete_selected
             ).pack(side="left", padx=5)
 
+=======
+        ctk.CTkButton(top_frame, text="Supprimer", fg_color="red", hover_color="#AA0000", command=self.delete_selected).pack(side="left", padx=5)
+>>>>>>> 1280d27de547dbc305e9f55dee04900c72692f4d
         ctk.CTkButton(top_frame, text="Exporter Excel", command=self.export_excel).pack(side="left", padx=5)
         ctk.CTkButton(top_frame, text="Exporter PDF", command=self.export_pdf).pack(side="left", padx=5)
         ctk.CTkButton(top_frame, text="Graphique", command=self.show_graph).pack(side="left", padx=5)
@@ -55,6 +59,7 @@ class HistoriquePage(ctk.CTkFrame):
 
         self.load_data()
 
+<<<<<<< HEAD
     def refresh(self):
         self.load_data()
 
@@ -63,6 +68,10 @@ class HistoriquePage(ctk.CTkFrame):
             user_id=self.app.current_user["id"],
             company_id=self.app.current_user.get("company_id"),
         )
+=======
+    def load_data(self):
+        rows = self.db.get_all()
+>>>>>>> 1280d27de547dbc305e9f55dee04900c72692f4d
         self.df = pd.DataFrame(rows, columns=COLUMNS)
         self.show_dataframe(self.df)
 
@@ -100,6 +109,7 @@ class HistoriquePage(ctk.CTkFrame):
         ]
         self.show_dataframe(result)
 
+<<<<<<< HEAD
     def _user_can_delete(self):
         """Seul l'admin d'une entreprise peut supprimer l'historique partage
         de l'equipe. Un compte particulier gere librement ses propres
@@ -116,6 +126,9 @@ class HistoriquePage(ctk.CTkFrame):
                 "Seul l'administrateur de l'entreprise peut supprimer une prediction."
             )
             return
+=======
+    def delete_selected(self):
+>>>>>>> 1280d27de547dbc305e9f55dee04900c72692f4d
         selected = self.tree.selection()
         if not selected:
             return

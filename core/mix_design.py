@@ -310,6 +310,19 @@ class DreuxGorisseMixDesign:
 
         sable_pct = yA
         gravier_pct = 100 - sable_pct
+<<<<<<< HEAD
+=======
+        warnings.append(
+            f"Repartition sable/gravier estimee a {sable_pct:.1f}%/"
+            f"{gravier_pct:.1f}% a partir du point A seul (simplification). "
+            f"La vraie methode Dreux-Gorisse lit ce partage a l'intersection "
+            f"de la courbe de reference avec les courbes granulometriques "
+            f"REELLES de ton sable et de ton gravier (trace graphique) : "
+            f"sur l'exemple du cours, cela donne 33%/67% au lieu du 38,2%/"
+            f"61,8% du point A seul. Si tu as les courbes granulometriques "
+            f"reelles de tes materiaux, donne-les moi pour affiner ce point."
+        )
+>>>>>>> 1280d27de547dbc305e9f55dee04900c72692f4d
 
         # ---- 6. Coefficient de compacite -> volumes absolus -------------
         if consistency_class is not None:

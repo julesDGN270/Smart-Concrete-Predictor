@@ -1,1 +1,26 @@
+<<<<<<< HEAD
 https://github.com/julesDGN270/Smart-Concrete-Predictor.git
+=======
+# Environnements / cache Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Donnees locales generees (a ne pas partager/versionner)
+history/*.db
+history/*.xlsx
+history/*.pdf
+
+# Artefacts de build (regeneres localement, inutiles sur GitHub)
+build/
+dist/
+installer_output/
+*.spec
+catboost_info/
+
+# Divers
+.DS_Store
+Thumbs.db
+>>>>>>> 1280d27de547dbc305e9f55dee04900c72692f4d

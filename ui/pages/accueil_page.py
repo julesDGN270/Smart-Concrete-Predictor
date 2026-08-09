@@ -6,7 +6,10 @@ Predire/Reinitialiser et la carte resultat restent toujours visibles
 quelle que soit la taille de la fenetre."""
 
 import customtkinter as ctk
+<<<<<<< HEAD
 from tkinter import messagebox
+=======
+>>>>>>> 1280d27de547dbc305e9f55dee04900c72692f4d
 from core.predictor import ConcretePredictor
 from core.database import Database
 
@@ -65,6 +68,7 @@ class AccueilPage(ctk.CTkFrame):
     def predict(self):
         try:
             values = [float(entry.get()) for entry in self.entries]
+<<<<<<< HEAD
         except ValueError:
             self.result.configure(text="Veuillez entrer uniquement des nombres.")
             self.quality.configure(text="")
@@ -74,6 +78,12 @@ class AccueilPage(ctk.CTkFrame):
             prediction = self.predictor.predict(values)
             self.app.last_prediction_values = values
             self.app.last_prediction = prediction
+=======
+            prediction = self.predictor.predict(values)
+            self.app.last_prediction_values = values
+            self.app.last_prediction = prediction
+            self.db.insert(values, prediction)
+>>>>>>> 1280d27de547dbc305e9f55dee04900c72692f4d
 
             if prediction >= 50:
                 quality = "Excellente"
@@ -87,6 +97,7 @@ class AccueilPage(ctk.CTkFrame):
             self.result.configure(text=f"Resistance : {prediction:.2f} MPa")
             self.quality.configure(text=f"Qualite : {quality}")
             self.app.set_status(f"Derniere prediction : {prediction:.2f} MPa")
+<<<<<<< HEAD
 
             self.db.insert(
                 values, prediction,
@@ -98,6 +109,11 @@ class AccueilPage(ctk.CTkFrame):
                 "Erreur",
                 f"La prediction a echoue ou n'a pas pu etre enregistree dans l'historique :\n{e}"
             )
+=======
+        except ValueError:
+            self.result.configure(text="Veuillez entrer uniquement des nombres.")
+            self.quality.configure(text="")
+>>>>>>> 1280d27de547dbc305e9f55dee04900c72692f4d
 
     def reset(self):
         for entry in self.entries:

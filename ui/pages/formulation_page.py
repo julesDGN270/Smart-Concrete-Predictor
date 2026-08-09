@@ -202,11 +202,15 @@ class FormulationIAPage(ctk.CTkFrame):
             return
         try:
             predicted = float(self.classic_assistant.predictor.predict(self.last_values_for_db))
+<<<<<<< HEAD
             self.db.insert(
                 self.last_values_for_db, predicted, source="formulation_ia",
                 user_id=self.app.current_user["id"],
                 company_id=self.app.current_user.get("company_id"),
             )
+=======
+            self.db.insert(self.last_values_for_db, predicted, source="formulation_ia")
+>>>>>>> 1280d27de547dbc305e9f55dee04900c72692f4d
             messagebox.showinfo("Historique", "Formulation enregistree dans l'historique.")
         except Exception as e:
             messagebox.showerror("Erreur", str(e))

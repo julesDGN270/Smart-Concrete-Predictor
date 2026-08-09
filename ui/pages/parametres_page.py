@@ -11,6 +11,7 @@ class ParametresPage(ctk.CTkFrame):
 
         ctk.CTkLabel(self, text="Parametres", font=("Arial", 24, "bold")).pack(pady=20)
 
+<<<<<<< HEAD
         user = getattr(app, "current_user", None) or {}
         compte_frame = ctk.CTkFrame(self)
         compte_frame.pack(pady=(0, 20), padx=20, fill="x")
@@ -50,6 +51,8 @@ class ParametresPage(ctk.CTkFrame):
             command=self.app.logout
         ).pack(pady=(0, 15), padx=15, anchor="w")
 
+=======
+>>>>>>> 1280d27de547dbc305e9f55dee04900c72692f4d
         ctk.CTkLabel(self, text="Mode d'apparence").pack()
         ctk.CTkOptionMenu(self, values=["System", "Light", "Dark"], command=self.change_mode).pack(pady=10)
 
@@ -70,7 +73,10 @@ class ParametresPage(ctk.CTkFrame):
 
     def change_theme(self, theme):
         ctk.set_default_color_theme(theme)
+<<<<<<< HEAD
 
     def _copy_invite_code(self):
         self.clipboard_clear()
         self.clipboard_append(self.invite_code_entry.get())
+=======
+>>>>>>> 1280d27de547dbc305e9f55dee04900c72692f4d
