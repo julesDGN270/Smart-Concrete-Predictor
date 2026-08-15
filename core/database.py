@@ -48,7 +48,6 @@ class Database:
                 "ALTER TABLE predictions ADD COLUMN source TEXT DEFAULT 'manuel'"
             )
             self.connection.commit()
-<<<<<<< HEAD
         if "user_id" not in existing_cols:
             self.cursor.execute(
                 "ALTER TABLE predictions ADD COLUMN user_id INTEGER"
@@ -59,8 +58,6 @@ class Database:
                 "ALTER TABLE predictions ADD COLUMN company_id INTEGER"
             )
             self.connection.commit()
-=======
->>>>>>> 1280d27de547dbc305e9f55dee04900c72692f4d
 
     def _migrate_legacy_csv_if_needed(self):
         self.cursor.execute("SELECT COUNT(*) FROM predictions")
@@ -99,38 +96,24 @@ class Database:
 
         self.connection.commit()
 
-<<<<<<< HEAD
     def insert(self, values, prediction, source="manuel", user_id=None, company_id=None):
-=======
-    def insert(self, values, prediction, source="manuel"):
->>>>>>> 1280d27de547dbc305e9f55dee04900c72692f4d
         self.cursor.execute("""
             INSERT INTO predictions(
                 date, cement, slag, fly_ash, water,
                 superplasticizer, coarse, fine, age,
-<<<<<<< HEAD
                 prediction, source, user_id, company_id
             ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
-=======
-                prediction, source
-            ) VALUES (?,?,?,?,?,?,?,?,?,?,?)
->>>>>>> 1280d27de547dbc305e9f55dee04900c72692f4d
         """, (
             datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
             *values,
             prediction,
-<<<<<<< HEAD
             source,
             user_id,
             company_id
-=======
-            source
->>>>>>> 1280d27de547dbc305e9f55dee04900c72692f4d
         ))
         self.connection.commit()
         return self.cursor.lastrowid
 
-<<<<<<< HEAD
     def fetch_all(self, user_id=None, company_id=None):
         """Historique des predictions.
         - company_id fourni -> historique partage de toute l'entreprise
@@ -176,22 +159,6 @@ class Database:
                 WHERE LOWER(date) LIKE ? OR CAST(prediction AS TEXT) LIKE ?
                 ORDER BY id DESC
             """, (text, text))
-=======
-    def fetch_all(self):
-        self.cursor.execute("SELECT * FROM predictions ORDER BY id DESC")
-        return self.cursor.fetchall()
-
-    def get_all(self):
-        return self.fetch_all()
-
-    def search(self, text):
-        text = f"%{text.lower()}%"
-        self.cursor.execute("""
-            SELECT * FROM predictions
-            WHERE LOWER(date) LIKE ? OR CAST(prediction AS TEXT) LIKE ?
-            ORDER BY id DESC
-        """, (text, text))
->>>>>>> 1280d27de547dbc305e9f55dee04900c72692f4d
         return self.cursor.fetchall()
 
     def delete(self, record_id):
