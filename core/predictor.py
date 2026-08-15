@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-import joblib
-
-class ConcretePredictor:
-
-    def __init__(self):
-        self.model = joblib.load("best_concrete_model.pkl")
-=======
 import sys
 import os
 import joblib
@@ -26,7 +18,6 @@ class ConcretePredictor:
 
     def __init__(self):
         self.model = joblib.load(resource_path("best_concrete_model.pkl"))
->>>>>>> 1280d27de547dbc305e9f55dee04900c72692f4d
 
     def predict(self, values):
         return self.model.predict([values])[0]
