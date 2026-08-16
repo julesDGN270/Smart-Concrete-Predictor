@@ -35,11 +35,17 @@ from core.auth import Auth, detect_contact_type
 from core.notifications import send_verification_code
 from core.database import Database
 from core.predictor import ConcretePredictor
+from core.formulation_assistant import FormulationAssistant
+from core.local_formulation import LocalMaterialsFormulationAssistant
+from core.text_to_formulation import generer_rapport
+from core.local_materials import CIMENTS_LOCAUX, SABLES_LOCAUX, GRANULATS_LOCAUX, ADDITIONS_LOCALES
 
 app = Flask(__name__, template_folder="web_templates", static_folder="web_static")
 app.secret_key = os.environ.get("SCP_SECRET_KEY", "dev-key-a-changer-en-production")
 
 _predictor = None
+_classic_assistant = None
+_local_assistant = None
 
 
 def get_predictor():
@@ -47,6 +53,20 @@ def get_predictor():
     if _predictor is None:
         _predictor = ConcretePredictor()
     return _predictor
+
+
+def get_classic_assistant():
+    global _classic_assistant
+    if _classic_assistant is None:
+        _classic_assistant = FormulationAssistant()
+    return _classic_assistant
+
+
+def get_local_assistant():
+    global _local_assistant
+    if _local_assistant is None:
+        _local_assistant = LocalMaterialsFormulationAssistant()
+    return _local_assistant
 
 
 FIELDS = [
@@ -282,6 +302,109 @@ def analyse():
     return render_template(
         "analyse.html", stats=stats, chart_labels=chart_labels, chart_values=chart_values
     )
+
+
+# ----------------------------------------------------------------------
+# Formulation IA
+# ----------------------------------------------------------------------
+
+FORMULATION_MODES = ("classique", "locaux", "texte")
+
+
+@app.route("/formulation", methods=["GET", "POST"])
+@login_required
+def formulation():
+    user = current_user()
+    mode = request.values.get("mode", "classique")
+    if mode not in FORMULATION_MODES:
+        mode = "classique"
+
+    result_text = None
+    error = None
+
+    if request.method == "POST":
+        try:
+            if mode == "classique":
+                sigma = request.form.get("sigma", "").strip()
+                affaissement = request.form.get("affaissement", "").strip()
+                verif = get_classic_assistant().propose_and_verify(
+                    target_strength=float(request.form.get("target", 30)),
+                    dmax=float(request.form.get("dmax", 20)),
+                    affaissement_cm=float(affaissement) if affaissement else None,
+                    cement_true_class=float(sigma) if sigma else None,
+                    sand_fineness_modulus=float(request.form.get("mf", 2.5)),
+                    exposure_class=request.form.get("exposure", "").strip() or None,
+                    granulat_quality=request.form.get("quality", "bonne"),
+                )
+                m = verif.mix
+                result_text = (
+                    verif.summary() + "\n\n"
+                    f"Mix : Ciment={m.cement:.0f}  Eau={m.water:.0f}  Sable={m.sand:.0f}  "
+                    f"Gravier={m.gravel:.0f}  E/C={m.ec_ratio:.3f}\n\n"
+                    + "\n".join(f"! {w}" for w in m.warnings)
+                )
+                session["pending_formulation_values"] = m.as_predictor_values()
+
+            elif mode == "locaux":
+                addition_key = request.form.get("addition") or None
+                if addition_key == "aucune":
+                    addition_key = None
+                affaissement = request.form.get("affaissement", "").strip()
+                result = get_local_assistant().propose(
+                    target_strength=float(request.form.get("target", 30)),
+                    dmax=float(request.form.get("dmax", 20)),
+                    cement_key=request.form.get("cement"),
+                    sable_key=request.form.get("sable"),
+                    granulat_key=request.form.get("granulat"),
+                    addition_key=addition_key,
+                    affaissement_cm=float(affaissement) if affaissement else None,
+                )
+                result_text = result.summary()
+                session["pending_formulation_values"] = [
+                    result.cement_final, 0.0, result.addition_mass, result.water_final,
+                    0.0, result.verification.mix.gravel, result.verification.mix.sand,
+                    result.verification.mix.age,
+                ]
+
+            else:  # texte libre
+                texte_utilisateur = request.form.get("texte", "").strip()
+                result_text = generer_rapport(texte_utilisateur)
+                session.pop("pending_formulation_values", None)
+
+        except Exception as exc:
+            error = str(exc)
+
+    return render_template(
+        "formulation.html",
+        mode=mode,
+        result_text=result_text,
+        error=error,
+        ciments=CIMENTS_LOCAUX,
+        sables=SABLES_LOCAUX,
+        granulats=GRANULATS_LOCAUX,
+        additions=ADDITIONS_LOCALES,
+        can_save="pending_formulation_values" in session,
+    )
+
+
+@app.route("/formulation/enregistrer", methods=["POST"])
+@login_required
+def formulation_enregistrer():
+    user = current_user()
+    values = session.get("pending_formulation_values")
+    if not values:
+        flash("Genere d'abord une formulation (formulaire ou materiaux locaux).", "error")
+        return redirect(url_for("formulation"))
+
+    predicted = round(float(get_predictor().predict(values)), 2)
+    db = Database()
+    db.insert(
+        values, predicted, source="formulation_ia",
+        user_id=user["id"], company_id=user.get("company_id"),
+    )
+    session.pop("pending_formulation_values", None)
+    flash("Formulation enregistree dans l'historique.", "success")
+    return redirect(url_for("formulation"))
 
 
 # ----------------------------------------------------------------------
