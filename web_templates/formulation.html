@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block title %}Formulation IA{% endblock %}
+{% block content %}
+<div class="card">
+    <h1>Formulation IA</h1>
+    <p class="muted">Assistant de formulation Dreux-Gorisse - formulaire classique, materiaux locaux, ou texte libre.</p>
+
+    <div class="tabs">
+        <a href="{{ url_for('formulation') }}?mode=classique" onclick="return false;" class="mode-tab {{ 'active' if mode == 'classique' }}" data-mode="classique">Formulaire classique</a>
+        <a href="{{ url_for('formulation') }}?mode=locaux" onclick="return false;" class="mode-tab {{ 'active' if mode == 'locaux' }}" data-mode="locaux">Materiaux locaux</a>
+        <a href="{{ url_for('formulation') }}?mode=texte" onclick="return false;" class="mode-tab {{ 'active' if mode == 'texte' }}" data-mode="texte">Texte libre</a>
+    </div>
+
+    {% if mode == 'classique' %}
+    <form method="post">
+        <input type="hidden" name="mode" value="classique">
+        <label>Resistance cible (MPa)</label>
+        <input type="number" step="any" name="target" value="30" required>
+        <label>Dmax (mm)</label>
+        <input type="number" step="any" name="dmax" value="20" required>
+        <label>Affaissement (cm)</label>
+        <input type="number" step="any" name="affaissement" value="7">
+        <label>Classe d'exposition (optionnel)</label>
+        <input type="text" name="exposure" placeholder="ex: XC3">
+        <label>Classe vraie ciment (MPa, optionnel)</label>
+        <input type="number" step="any" name="sigma" placeholder="laisser vide pour valeur par defaut">
+        <label>Module de finesse sable</label>
+        <input type="number" step="any" name="mf" value="2.5">
+        <label>Qualite des granulats</label>
+        <select name="quality">
+            <option value="excellente">Excellente</option>
+            <option value="bonne" selected>Bonne</option>
+            <option value="passable">Passable</option>
+        </select>
+        <button type="submit">Generer la formulation</button>
+    </form>
+
+    {% elif mode == 'locaux' %}
+    <form method="post">
+        <input type="hidden" name="mode" value="locaux">
+        <label>Resistance cible (MPa)</label>
+        <input type="number" step="any" name="target" value="30" required>
+        <label>Dmax (mm)</label>
+        <input type="number" step="any" name="dmax" value="20" required>
+        <label>Affaissement (cm)</label>
+        <input type="number" step="any" name="affaissement" value="7">
+        <label>Ciment local</label>
+        <select name="cement">
+            {% for key, c in ciments.items() %}
+            <option value="{{ key }}">{{ c.label }}</option>
+            {% endfor %}
+        </select>
+        <label>Sable local</label>
+        <select name="sable">
+            {% for key, s in sables.items() %}
+            <option value="{{ key }}">{{ s.label }}</option>
+            {% endfor %}
+        </select>
+        <label>Granulat local</label>
+        <select name="granulat">
+            {% for key, g in granulats.items() %}
+            <option value="{{ key }}">{{ g.label }}</option>
+            {% endfor %}
+        </select>
+        <label>Addition locale (optionnel)</label>
+        <select name="addition">
+            <option value="aucune">Aucune addition</option>
+            {% for key, a in additions.items() %}
+            <option value="{{ key }}">{{ a.label }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Generer la formulation</button>
+    </form>
+
+    {% else %}
+    <form method="post">
+        <input type="hidden" name="mode" value="texte">
+        <label>Decris ton besoin en francais</label>
+        <textarea name="texte" rows="5" style="width:100%;padding:10px 12px;background:#0f1115;border:1px solid #2a2e37;border-radius:6px;color:#e8e8e8;font-size:14px;">Ex: beton de 30 MPa, Dmax 20mm, XC3, affaissement de 7cm, sable de riviere, granite concasse, cendre de balle de riz.</textarea>
+        <button type="submit">Analyser et generer</button>
+    </form>
+    {% endif %}
+
+    {% if error %}
+    <div class="flash error" style="margin-top:20px;">{{ error }}</div>
+    {% endif %}
+
+    {% if result_text %}
+    <div class="result-box" style="white-space:pre-wrap;font-family:monospace;font-size:13px;line-height:1.5;">{{ result_text }}</div>
+
+    {% if can_save %}
+    <form method="post" action="{{ url_for('formulation_enregistrer') }}">
+        <button type="submit" class="btn-outline">Enregistrer dans l'historique</button>
+    </form>
+    {% endif %}
+    {% endif %}
+</div>
+
+<script>
+    // Bascule de mode : on soumet un mini-formulaire GET pour recharger la page avec le bon mode
+    document.querySelectorAll('.mode-tab').forEach(function (tab) {
+        tab.addEventListener('click', function () {
+            const mode = tab.getAttribute('data-mode');
+            const form = document.createElement('form');
+            form.method = 'get';
+            form.action = "{{ url_for('formulation') }}";
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'mode';
+            input.value = mode;
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
+        });
+    });
+</script>
+{% endblock %}
